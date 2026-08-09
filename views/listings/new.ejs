@@ -1,0 +1,108 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row mt-4">
+    <div class="col-8 offset-2">
+
+        <h2 class="mb-4">Create a New Listing</h2>
+
+        <form action="/listings" method="POST" class="needs-validation" novalidate>
+
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input
+                    type="text"
+                    name="listing[title]"
+                    class="form-control"
+                    placeholder="Add a catchy title"
+                    required
+                >
+                <div class="valid-feedback">   / <!--success text-->
+                   Title looks good!
+                /div>
+                <div class="invalid-feedback">   <!--failure text-->
+                   Please enter valid title.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea
+                    name="listing[description]"
+                    class="form-control"
+                    rows="3"
+                    required
+                ></textarea>
+                <div class="invalid-feedback">
+                  Please enter description.
+              </div>
+            </div>
+
+            <div class="mb-3">
+               <label class="form-label">Image URL</label>
+               <input
+                  type="text"
+                  class="form-control"
+                 name="listing[image][url]"
+                 placeholder="Enter image URL"
+                 required
+               > 
+              <div class="invalid-feedback">
+                  Please provide an image URL.
+              </div>
+          </div>
+
+            <div class="row">
+
+                <div class="col-md-4 mb-3">
+                    <label class="form-label">Price</label>
+                    <input
+                        type="number"
+                        name="listing[price]"
+                        class="form-control"
+                        placeholder="1200"
+                        required
+                    >
+                    <div class="invalid-feedback">
+                      Please enter price per night.
+                  </div>
+                </div>
+
+                <div class="col-md-8 mb-3">
+                    <label class="form-label">Country</label>
+                    <input
+                        type="text"
+                        name="listing[country]"
+                        class="form-control"
+                        placeholder="India"
+                        required
+                    >
+                    <div class="invalid-feedback">
+                       Please enter country name.
+                   </div>
+                </div>
+
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Location</label>
+                <input
+                    type="text"
+                    name="listing[location]"
+                    class="form-control"
+                    placeholder="Jaipur, Rajasthan"
+                    required
+                >
+                <div class="invalid-feedback">
+                  Please enter location.
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-danger">
+                Add
+            </button>
+
+        </form>
+
+    </div>
+</div>
+

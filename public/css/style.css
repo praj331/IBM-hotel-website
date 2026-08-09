@@ -1,0 +1,233 @@
+/* ===========================
+   Global Styles
+=========================== */
+
+body{
+    font-family: "Plus Jakarta Sans", sans-serif;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+    background:#f8f9fa;
+}
+
+.container{
+    flex:1;
+    margin-top:2rem;
+}
+
+/* ===========================
+   Navbar
+=========================== */
+
+.navbar{
+    height:5rem;
+    background:white;
+    box-shadow:0 2px 8px rgba(0,0,0,0.05);
+}
+
+.fa-compass{
+    color:#fe424d;
+    font-size:2rem;
+}
+
+.nav-link{
+    color:#222 !important;
+    font-weight:500;
+}
+
+.nav-link:hover{
+    color:#fe424d !important;
+}
+
+/* ===========================
+   Footer
+=========================== */
+
+.f-info{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background:#ebebeb;
+    padding:1rem;
+    margin-top:3rem;
+}
+
+.f-info-links,
+.f-info-socials,
+.f-info-brand{
+    width:100%;
+    margin:.4rem 0;
+}
+
+.f-info-links a{
+    text-decoration:none;
+    color:#222;
+    margin:0 .6rem;
+}
+
+.f-info-links a:hover{
+    text-decoration:underline;
+}
+
+.f-info-socials i{
+    font-size:1.3rem;
+    margin:0 .5rem;
+}
+
+/* ===========================
+   Listing Cards
+=========================== */
+
+.card{
+    border:none;
+    border-radius:18px;
+    overflow:hidden;
+    transition:all .35s ease;
+    height:100%;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    background:#fff;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 15px 30px rgba(0,0,0,.15);
+}
+
+.card-img-top{
+    width:100%;
+    height:230px;
+    object-fit:cover;
+    transition:transform .5s ease;
+}
+
+.card:hover .card-img-top{
+    transform:scale(1.08);
+}
+
+.card-body{
+    padding:1rem;
+    display:flex;
+    flex-direction:column;
+}
+
+.card-title{
+    font-size:1.15rem;
+    font-weight:600;
+    min-height:56px;
+    margin-bottom:.5rem;
+}
+
+.card-text{
+    color:#555;
+    margin-bottom:1rem;
+    font-size:1rem;
+}
+
+.card-text b{
+    color:#000;
+}
+
+/* ===========================
+   Buttons
+=========================== */
+
+.btn-dark{
+    margin-top:auto;
+    border-radius:8px;
+    padding:8px 18px;
+    transition:.3s;
+}
+
+.btn-dark:hover{
+    transform:scale(1.05);
+}
+
+/* ===========================
+   Forms
+=========================== */
+
+form label{
+    font-weight:500;
+}
+
+.form-control{
+    border-radius:8px;
+}
+
+h2{
+    font-weight:600;
+}
+
+/* ===========================
+   Show Page
+=========================== */
+
+.listing-card{
+    border:none !important;
+}
+
+.listing-card img{
+    height:420px;
+    object-fit:cover;
+    border-radius:18px;
+}
+
+.btn{
+    min-width:100px;
+}
+
+/* ===========================
+   Responsive
+=========================== */
+
+@media(max-width:992px){
+
+.card-img-top{
+    height:210px;
+}
+
+}
+
+@media(max-width:768px){
+
+.container{
+    margin-top:1rem;
+}
+
+.card-img-top{
+    height:200px;
+}
+
+.listing-card img{
+    height:300px;
+}
+
+.f-info{
+    padding:1.5rem 0;
+}
+
+}
+
+@media(max-width:576px){
+
+.card-img-top{
+    height:190px;
+}
+
+.navbar{
+    height:auto;
+    padding:1rem;
+}
+
+.listing-card img{
+    height:250px;
+}
+
+}
+/* Errors */
+.alertHeading {
+    text-align: center !important;
+    
+}
