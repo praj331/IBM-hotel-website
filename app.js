@@ -3,6 +3,7 @@ const app = express();
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
+const Reaview= require("./models/review.js");
 const path = require("path");
 const ejsMate = require("ejs-mate");    //new package
 const mongoUrl = "mongodb://127.0.0.1:27017/WanderLust";

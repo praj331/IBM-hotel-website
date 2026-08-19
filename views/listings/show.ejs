@@ -3,7 +3,7 @@
 <div class="row mt-4">
     <div class="col-8 offset-2">
 
-        <h2 class="mb-3">Listing Details</h2>
+        <h2 class="mb-3"><%=listing.title%></h2>
 
         <div class="card listing-card shadow-sm">
              <img
@@ -57,5 +57,20 @@
 
         </div>
 
+    </div>
+    <hr>
+    <div class="col-8 offset-3">
+        <h4>Review</h4>
+        <form>
+            <div class="mb-3 mt-3">
+                <lable for="rating" class="form-lable">Rating</lable>
+                <input type="range" min="1" max="5" id="rating" name="review[rating]">
+            </div>
+            <div mb-3 mt-3">
+                <lable for="comment" class="form-lable">Comments</lable>
+                <textarea name="reviewComment" id="comment" cols="30" rows="5"></textarea>
+            </div>
+            <button class="btn btn-outline-dark">Submit</button>
+        </form>
     </div>
 </div>
