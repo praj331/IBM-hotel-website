@@ -1,135 +1,171 @@
 const express = require("express");
 const app = express();
+const mongoUrl = "mongodb://127.0.0.1:27017/WanderLust";
 const methodOverride = require("method-override");
 const mongoose = require("mongoose");
-const Listing = require("./models/listing.js");
-const Reaview= require("./models/review.js");
 const path = require("path");
-const ejsMate = require("ejs-mate");    //new package
-const mongoUrl = "mongodb://127.0.0.1:27017/WanderLust";
-const wrapAsync = require("./utils/wrapAsync.js");
-const ExpressError =require("./utils/ExpressError.js");
+const ejsMate = require("ejs-mate");
 
-//data validation by joi
-const {listingSchema} =require("./schema.js");
-const validateListing = (req,res,next) => {
-    let {error} = listingSchema.validate(req.body);
-    //console.log(error);
-   if(error) {
-    let errMsg = error.details.map((el) => el.message.join(","));
-     throw new ExpressError(400,"errMsg");
-    }
-    else{
-        next();
-    }
-}
+const ExpressError = require("./utils/ExpressError.js");
+
+const listingRouter = require("./router/listing.js");
+const reviewRouter= require("./router/review.js");
+const userRouter= require("./router/user.js");
+const cookieParser= require("cookie-parser");
+
+const session= require("express-session");   //express sessions
+const flash = require("connect-flash");  //used connect-flash
+
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const User = require("./models/user.js");
+
+// ===============================
+// VIEW ENGINE
+// ===============================
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-app.engine("ejs",ejsMate);   //learn it
+app.engine("ejs", ejsMate);
+
+
+// ===============================
+// MIDDLEWARE
+// ===============================
 
 app.use(express.urlencoded({ extended: true }));
+
 app.use(methodOverride("_method"));
 
-app.use(express.static(path.join(__dirname,"/public")));
+app.use(
+    express.static(
+        path.join(__dirname, "public")
+    )
+);
+
+//================================
+//express session intialze
+//================================
+const sessionOptions = {
+    secret:"mysupersecretcode",
+    resave:false,
+    saveUninitialized:true,
+    cookie: {
+        expires: Date.now() + 30*24*60*1000,
+        maxAge: 30*24*60*1000,
+        httpOnly: true,    //prevent from cross 
+    },
+};
+app.use(session(sessionOptions));
+app.use(flash());
+
+app.use(passport.initialize());               //using passport for autentication
+app.use(passport.session());    
+passport.use(new LocalStrategy(User.authenticate())) ;
+
+app.use((req,res,next) => {
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    res.locals.currentUser = req.user;
+    next();
+}); 
+
+// ===============================
+// DATABASE
+// ===============================
+
 async function main() {
+
     await mongoose.connect(mongoUrl);
+
 }
 
 main()
     .then(() => {
+
         console.log("Connected to MongoDB");
+
     })
     .catch((err) => {
+
         console.log(err);
+
     });
 
+
+
+// ===============================
+// HOME ROUTE
+// ===============================
+
 app.get("/", (req, res) => {
-    res.send("Hello Everyone");
-});
 
-
-// INDEX ROUTE
-app.get("/listings", wrapAsync(async (req, res) => {
-    const allListings = await Listing.find({});
-    res.render("listings/index.ejs", { allListings });
-}));
-
-
-// NEW ROUTE
-app.get("/listings/new", (req, res) => {
-    res.render("listings/new");
-});
-
-
-// CREATE ROUTE
-app.post("/listings", validateListing ,wrapAsync(async(req, res,next) => {
-    if(!req.body.listing) {
-        throw new ExpressError(400,"Send valid data!!");    //when client send  different request
-    }
-    const newListing = new Listing(req.body.listing);
-    //  here is way to data validation if(!Listing.title) {
-    //     throw new ExpressError(400,"Title is missing.")
-    // }
+    res.send("Hello Everyone !!");
     
-    await newListing.save();
 
-    res.redirect("/listings");
-}));
-
-// SHOW ROUTE
-app.get("/listings/:id", wrapAsync(async (req, res) => {
-    let { id } = req.params;
-
-    const listing = await Listing.findById(id);
-
-    res.render("listings/show.ejs", { listing });
-}));
+});
 
 
+// ===============================
+// LISTING ROUTER
+// ===============================
 
-// EDIT ROUTE
-app.get("/listings/:id/edit", wrapAsync(async (req, res) => {
-    let { id } = req.params;
+app.use(
+    "/listings",
+    listingRouter
+);
+// ===============================
+// REVIEW ROUTER
+// ===============================
 
-    const listing = await Listing.findById(id);
+app.use("/listings/:id/reviews",reviewRouter);
 
-    res.render("listings/edit.ejs", { listing });
-}));
-
-
-// UPDATE ROUTE
-
-app.put("/listings/:id", validateListing,wrapAsync(async (req, res) => {
-    const { id } = req.params;
-
-    await Listing.findByIdAndUpdate(id, req.body.listing);
-
-    res.redirect(`/listings/${id}`);
-}));
-
-// DELETE ROUTE
-
-app.delete("/listings/:id", wrapAsync(async (req, res) => {
-    const { id } = req.params;
-    //previous line of my code const deletedListing = await Listing.findByIdAndDelete(id);
-    // console.log(deletedListing);
-    await Listing.findByIdAndDelete(id);
-
-    res.redirect("/listings");
-}));
-
-//ERROR HANDELING
+// ===============================
+// ERROR - 404
+// ===============================
 
 app.use((req, res, next) => {
-    next(new ExpressError(404, "Page not found!"));
+
+    next(
+        new ExpressError(
+            404,
+            "Page not found!"
+        )
+    );
+
 });
+
+
+// ===============================
+// ERROR HANDLER
+// ===============================
+
 app.use((err, req, res, next) => {
-    let { statusCode = 500, message = "Something went wrong!" } = err;
-    //res.status(statusCode).send(message);
-    res.status(statusCode).render("error.ejs",{err});
+
+    let {
+        statusCode = 500,
+        message = "Something went wrong!"
+    } = err;
+
+    res
+        .status(statusCode)
+        .render("error.ejs", { err });
+
 });
+
+
+// ===============================
+// SERVER
+// ===============================
+
 app.listen(3000, () => {
-    console.log("Server is running on port 3000");
+
+    console.log(
+        "Server is running on port 3000"
+    );
+
 });
+
+
+//note passport,authentication from lecture

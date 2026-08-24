@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Review = require("./review.js");
 
 const listingSchema = new Schema({
     title: {
@@ -43,10 +44,24 @@ const listingSchema = new Schema({
         type: String,
         required: true,
     },
-    review: [{
+    reviews: [{
          type: Schema.Types.ObjectId,
          ref:"Review",
-    }]
+    }],
+    owner : {        /// it reffers User
+       type: Schema.Types.ObjectId,
+       ref:"User",
+    }
+});
+
+listingSchema.post("findOneAndDelete",async (listing)=> {
+    if(listing) {
+       await Review.deleteMany({id : {$in: listing.reviews}});
+    }
+        
 });
 
 module.exports = mongoose.model("Listing", listingSchema);
+
+//Express Router- Express routers are a way to oraganize your express application suc tat primary app.js file does not become bloated.
+
