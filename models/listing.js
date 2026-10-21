@@ -23,7 +23,7 @@ const listingSchema = new Schema({
             default:
                 "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800",
             set: (v) =>
-                v === ""
+                v === "" || !v
                     ? "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800"
                     : v,
         },
@@ -44,24 +44,54 @@ const listingSchema = new Schema({
         type: String,
         required: true,
     },
-    reviews: [{
-         type: Schema.Types.ObjectId,
-         ref:"Review",
-    }],
-    owner : {        /// it reffers User
-       type: Schema.Types.ObjectId,
-       ref:"User",
-    }
+
+    category: {
+        type: String,
+        enum: [
+            "Trending",
+            "Rooms",
+            "Iconic Cities",
+            "Mountains",
+            "Castles",
+            "Amazing Pools",
+            "Camping",
+            "Farms",
+            "Arctic",
+            "Domes",
+            "Boats",
+        ],
+        default: "Trending",
+    },
+
+    geometry: {
+        type: {
+            type: String,
+            enum: ["Point"],
+            default: "Point",
+        },
+        coordinates: {
+            type: [Number],
+            default: [77.209, 28.6139], // [longitude, latitude]
+        },
+    },
+
+    reviews: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Review",
+        },
+    ],
+
+    owner: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+    },
 });
 
-listingSchema.post("findOneAndDelete",async (listing)=> {
-    if(listing) {
-       await Review.deleteMany({id : {$in: listing.reviews}});
+listingSchema.post("findOneAndDelete", async (listing) => {
+    if (listing && listing.reviews && listing.reviews.length > 0) {
+        await Review.deleteMany({ _id: { $in: listing.reviews } });
     }
-        
 });
 
 module.exports = mongoose.model("Listing", listingSchema);
-
-//Express Router- Express routers are a way to oraganize your express application suc tat primary app.js file does not become bloated.
-

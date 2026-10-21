@@ -1,21 +1,24 @@
-//for autentication
-
-const { required } = require("joi");
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const passportLocalMongoose = require("passport-local-mongoose");
-//note passport from lectures
+let passportLocalMongoose = require("passport-local-mongoose");
+if (passportLocalMongoose && typeof passportLocalMongoose !== "function" && passportLocalMongoose.default) {
+    passportLocalMongoose = passportLocalMongoose.default;
+}
 
-const userSchema= new Schema({
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
     email: {
-       type: string, 
-       required: true,
+        type: String,
+        required: true,
     },
+    wishlist: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Listing",
+        },
+    ],
 });
 
-User.plugin(passportLocalMongoose); //note
+userSchema.plugin(passportLocalMongoose);
 
-module.exports = mongoose.model('User',userSchema);
-
-//note configuration metods or stratiies
-
+module.exports = mongoose.model("User", userSchema);

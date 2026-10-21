@@ -1,30 +1,61 @@
-<nav class="navbar navbar-expand-lg bg-body-light border-bottom sticky-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/"><i class="fa-regular fa-compass"></i></a>
+<nav class="navbar navbar-expand-md border-bottom sticky-top shadow-sm custom-navbar">
+  <div class="container-fluid px-3 px-md-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="/listings">
+      <i class="fa-regular fa-compass brand-icon"></i>
+      <span class="brand-text fw-bold text-danger d-none d-sm-inline">WanderLust</span>
+    </a>
+
+    <!-- Search Form in Navbar -->
+    <form class="d-flex search-bar-nav flex-grow-1 mx-2 mx-md-4" role="search" action="/listings" method="GET">
+      <div class="input-group search-input-group">
+        <input 
+          class="form-control search-input" 
+          type="search" 
+          name="q" 
+          placeholder="Search destinations..." 
+          aria-label="Search"
+          value="<%= typeof q !== 'undefined' ? q : '' %>"
+        >
+        <button class="btn btn-search" type="submit" aria-label="Search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span class="d-none d-lg-inline ms-1">Search</span>
+        </button>
+      </div>
+    </form>
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-link" aria-current="page" href="/">Home</a>
-        <a class="nav-link" href="/listings">All Listings</a>
-        <a class="nav-link" href="/listings/new">New</a>
-        
-      </div>
-       <div class="navbar-nav ms-auto">
-        <% if(!currentUser){
-          %>
-           <a class="nav-link" aria-current="page" href="/signup">Sign Up</a>
-           <a class="nav-link" href="/login">Log In</a>
-          <%
-        }%>
-        <% if(currentUser){
-          %>
-           <a class="nav-link" href="/logout">Log Out</a>
-          <%
-        }%>
-        
-        
+
+    <div class="collapse navbar-collapse flex-grow-0" id="navbarNavAltMarkup">
+      <div class="navbar-nav align-items-md-center mt-2 mt-md-0 gap-1 gap-md-2">
+        <a class="nav-link" href="/listings">Explore</a>
+        <a class="nav-link" href="/listings/new">Airbnb your home</a>
+
+        <!-- Wishlist -->
+        <a class="nav-link d-flex align-items-center gap-1" href="/wishlist" title="Wishlist">
+          <i class="fa-solid fa-heart text-danger"></i>
+          <span>Wishlist</span>
+        </a>
+
+        <!-- Dark Mode Toggle Button -->
+        <div class="nav-item my-1 my-md-0">
+          <button class="btn btn-outline-secondary btn-sm theme-toggle-btn" id="themeToggleBtn" type="button" aria-label="Toggle dark mode" title="Toggle Dark/Light Mode">
+            <i class="fa-solid fa-moon" id="themeIcon"></i>
+          </button>
+        </div>
+
+        <% if(!currentUser) { %>
+          <a class="nav-link fw-semibold" href="/signup">Sign up</a>
+          <a class="nav-link fw-semibold" href="/login">Log in</a>
+        <% } %>
+
+        <% if(currentUser) { %>
+          <span class="nav-link text-secondary d-none d-lg-inline-block">
+            <i class="fa-regular fa-circle-user me-1"></i><%= currentUser.username %>
+          </span>
+          <a class="nav-link text-danger fw-semibold" href="/logout">Log out</a>
+        <% } %>
       </div>
     </div>
   </div>

@@ -1,31 +1,55 @@
 <% layout("/layouts/boilerplate") %>
-<div class="row mt-3">
-    <h1 class="col-6 offset-3">Login</h1>
-    <div class="col-6 offset-3">
-        <form action="/login" method="POST" class="needs-validation" novalidate>
-            <div class="mb-3">
-                <lable for="username" class="form-label">Username</lable> 
-                 <input
-                 name="username"
-                 id="username"
-                 type="text"
-                 class="form-control"
-                 required
-                 />
-                
-            </div>
-            
-            <div class="mb-3">
-                <lable for="password" class="form-label">Password</lable> 
-                 <input
-                 name="password"
-                 id="password"
-                 type="password"
-                 class="form-control"
-                 required
-                 />
-             </div>
-             <button class="btn btn-success">Login</button>
-        </form>
+
+<div class="row mt-4 mb-5">
+  <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-6 offset-lg-3">
+    <div class="card p-4 shadow-sm border-0 bg-body">
+      <h2 class="fw-bold mb-4 text-center">Log in to WanderLust</h2>
+
+      <form action="/login" method="POST" class="needs-validation" novalidate>
+        <!-- Username -->
+        <div class="mb-3">
+          <label for="username" class="form-label fw-semibold">Username</label>
+          <input
+            name="username"
+            id="username"
+            type="text"
+            class="form-control"
+            placeholder="Enter your username"
+            required
+            autocomplete="username"
+          >
+          <div class="invalid-feedback">Please enter your username.</div>
+        </div>
+
+        <!-- Password -->
+        <div class="mb-3">
+          <label for="password" class="form-label fw-semibold">Password</label>
+          <input
+            name="password"
+            id="password"
+            type="password"
+            class="form-control"
+            placeholder="Enter your password"
+            required
+            autocomplete="current-password"
+          >
+          <div class="invalid-feedback">Please enter your password.</div>
+        </div>
+
+        <!-- Remember Me Checkbox -->
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe" value="true" checked>
+          <label class="form-check-label text-muted small" for="rememberMe">Remember me on this device</label>
+        </div>
+
+        <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold mb-3">
+          Log in
+        </button>
+
+        <div class="text-center text-muted small">
+          Don't have an account yet? <a href="/signup" class="text-danger fw-semibold text-decoration-none">Sign up</a>
+        </div>
+      </form>
     </div>
+  </div>
 </div>

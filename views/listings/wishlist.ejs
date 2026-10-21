@@ -1,0 +1,61 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="mb-4">
+  <h2 class="fw-bold mb-1"><i class="fa-solid fa-heart text-danger me-2"></i>My Wishlist</h2>
+  <p class="text-muted">Places you've saved for your future trips.</p>
+</div>
+
+<% if (allListings && allListings.length > 0) { %>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+    <% for(let listing of allListings) { %>
+      <div class="col">
+        <div class="card listing-card h-100 position-relative">
+          <!-- Wishlist Heart Button -->
+          <button 
+            type="button" 
+            class="wishlist-btn active" 
+            data-id="<%= listing._id %>"
+            aria-label="Remove from wishlist"
+            title="Remove from wishlist"
+          >
+            <i class="fa-solid fa-heart text-danger"></i>
+          </button>
+
+          <a href="/listings/<%= listing._id %>" class="listing-link text-decoration-none text-reset">
+            <div class="listing-img-container">
+              <img
+                src="<%= listing.image?.url || 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800' %>"
+                class="card-img-top"
+                alt="<%= listing.title %>"
+                loading="lazy"
+                onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800';"
+              >
+            </div>
+
+            <div class="card-body p-2 pt-3">
+              <h6 class="card-title fw-bold text-truncate mb-1" title="<%= listing.title %>">
+                <%= listing.title %>
+              </h6>
+              <p class="card-location text-muted small mb-1 text-truncate">
+                <%= listing.location %>, <%= listing.country %>
+              </p>
+              <p class="card-price mb-0">
+                <span class="fw-bold">&#8377; <%= (listing.price ?? 0).toLocaleString("en-IN") %></span>
+                <span class="text-muted small"> / night</span>
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+    <% } %>
+  </div>
+<% } else { %>
+  <div class="text-center py-5 my-5">
+    <div class="mb-3">
+      <i class="fa-regular fa-heart text-muted display-4"></i>
+    </div>
+    <h3>Your wishlist is empty</h3>
+    <p class="text-muted">Explore listings and click the heart icon on any card to save your favorite stays.</p>
+    <a href="/listings" class="btn btn-danger mt-2">Explore Listings</a>
+  </div>
+<% } %>

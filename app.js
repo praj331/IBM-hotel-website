@@ -5,167 +5,118 @@ const methodOverride = require("method-override");
 const mongoose = require("mongoose");
 const path = require("path");
 const ejsMate = require("ejs-mate");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
 
+const User = require("./models/user.js");
 const ExpressError = require("./utils/ExpressError.js");
 
 const listingRouter = require("./router/listing.js");
-const reviewRouter= require("./router/review.js");
-const userRouter= require("./router/user.js");
-const cookieParser= require("cookie-parser");
-
-const session= require("express-session");   //express sessions
-const flash = require("connect-flash");  //used connect-flash
-
-const passport = require("passport");
-const LocalStrategy = require("passport-local");
-const User = require("./models/user.js");
+const reviewRouter = require("./router/review.js");
+const userRouter = require("./router/user.js");
 
 // ===============================
 // VIEW ENGINE
 // ===============================
-
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-
 app.engine("ejs", ejsMate);
-
 
 // ===============================
 // MIDDLEWARE
 // ===============================
-
 app.use(express.urlencoded({ extended: true }));
-
+app.use(express.json());
 app.use(methodOverride("_method"));
+app.use(cookieParser("mysupersecretcode"));
+app.use(express.static(path.join(__dirname, "public")));
 
-app.use(
-    express.static(
-        path.join(__dirname, "public")
-    )
-);
-
-//================================
-//express session intialze
-//================================
+// ===============================
+// EXPRESS SESSION & FLASH
+// ===============================
 const sessionOptions = {
-    secret:"mysupersecretcode",
-    resave:false,
-    saveUninitialized:true,
+    secret: "mysupersecretcode",
+    resave: false,
+    saveUninitialized: true,
     cookie: {
-        expires: Date.now() + 30*24*60*1000,
-        maxAge: 30*24*60*1000,
-        httpOnly: true,    //prevent from cross 
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        httpOnly: true,
     },
 };
+
 app.use(session(sessionOptions));
 app.use(flash());
 
-app.use(passport.initialize());               //using passport for autentication
-app.use(passport.session());    
-passport.use(new LocalStrategy(User.authenticate())) ;
+// ===============================
+// PASSPORT CONFIGURATION
+// ===============================
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
 
-app.use((req,res,next) => {
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     res.locals.currentUser = req.user;
+    res.locals.currentPath = req.path;
     next();
-}); 
+});
 
 // ===============================
 // DATABASE
 // ===============================
-
 async function main() {
-
     await mongoose.connect(mongoUrl);
-
 }
 
 main()
     .then(() => {
-
         console.log("Connected to MongoDB");
-
     })
     .catch((err) => {
-
-        console.log(err);
-
+        console.log("MongoDB connection error:", err);
     });
 
-
-
 // ===============================
-// HOME ROUTE
+// HOME ROUTE (Redirect to listings)
 // ===============================
-
 app.get("/", (req, res) => {
-
-    res.send("Hello Everyone !!");
-    
-
+    res.redirect("/listings");
 });
 
-
 // ===============================
-// LISTING ROUTER
+// ROUTERS
 // ===============================
-
-app.use(
-    "/listings",
-    listingRouter
-);
-// ===============================
-// REVIEW ROUTER
-// ===============================
-
-app.use("/listings/:id/reviews",reviewRouter);
+app.use("/listings", listingRouter);
+app.use("/listings/:id/reviews", reviewRouter);
+app.use("/", userRouter);
 
 // ===============================
 // ERROR - 404
 // ===============================
-
 app.use((req, res, next) => {
-
-    next(
-        new ExpressError(
-            404,
-            "Page not found!"
-        )
-    );
-
+    next(new ExpressError(404, "Page not found!"));
 });
-
 
 // ===============================
 // ERROR HANDLER
 // ===============================
-
 app.use((err, req, res, next) => {
-
-    let {
-        statusCode = 500,
-        message = "Something went wrong!"
-    } = err;
-
-    res
-        .status(statusCode)
-        .render("error.ejs", { err });
-
+    const { statusCode = 500, message = "Something went wrong!" } = err;
+    res.status(statusCode).render("error.ejs", { err: { statusCode, message } });
 });
-
 
 // ===============================
 // SERVER
 // ===============================
-
-app.listen(3000, () => {
-
-    console.log(
-        "Server is running on port 3000"
-    );
-
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
-
-
-//note passport,authentication from lecture
